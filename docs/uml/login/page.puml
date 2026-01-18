@@ -1,0 +1,137 @@
+@startuml LoginPage Component Structure
+
+' LoginPage Component UML Diagram
+' This diagram shows the structure of the LoginPage component
+' as implemented in app/login/page.tsx
+
+package "app/login" {
+  class LoginPage {
+    + LoginPage(): JSX.Element
+    --
+    ' React Functional Component
+    ' Returns: JSX page element with login form
+    ' Current: Inline form, no state, no handlers
+  }
+}
+
+package "JSX Elements" {
+  class PageContainer {
+    - className: string (Tailwind gradient classes)
+  }
+
+  class CardContainer {
+    - className: string (Tailwind card classes)
+  }
+
+  class Heading {
+    - text: "Welcome Back"
+    - className: string (Tailwind heading classes)
+  }
+
+  class Subheading {
+    - text: "Sign in to your account"
+    - className: string (Tailwind text classes)
+  }
+
+  class LoginForm {
+    - className: "space-y-4"
+    + onSubmit: undefined (no handler)
+  }
+
+  class EmailInput {
+    - type: "email"
+    - id: "email"
+    - required: true
+    - placeholder: "you@example.com"
+    - className: string (Tailwind classes)
+  }
+
+  class PasswordInput {
+    - type: "password"
+    - id: "password"
+    - required: true
+    - placeholder: "********"
+    - className: string (Tailwind classes)
+  }
+
+  class SubmitButton {
+    - type: "submit"
+    - text: "Login"
+    - className: string (Tailwind classes)
+  }
+
+  class Label {
+    - htmlFor: string
+    - className: string (Tailwind classes)
+    - text: string
+  }
+}
+
+package "Future Integration" {
+  interface AuthProvider {
+    + signIn(credentials): Promise<Session>
+    + handleError(error): void
+  }
+
+  class AuthJSv5Adapter {
+    + authenticate(email, password): Promise<Session>
+    + validateCredentials(): boolean
+  }
+
+  class FormState {
+    - email: string
+    - password: string
+    - errors: ValidationError[]
+    - isLoading: boolean
+    + updateField(): void
+    + validateForm(): boolean
+    + reset(): void
+  }
+}
+
+' Current Structure (as implemented)
+LoginPage --> PageContainer : returns
+PageContainer --> CardContainer : contains
+CardContainer --> Heading : contains
+CardContainer --> Subheading : contains
+CardContainer --> LoginForm : contains
+LoginForm *-- EmailInput : contains
+LoginForm *-- PasswordInput : contains
+LoginForm *-- SubmitButton : contains
+EmailInput ..> Label : associated with
+PasswordInput ..> Label : associated with
+
+' Future Relationships (commented for future implementation)
+' LoginPage ..> FormState : will use
+' LoginPage ..> AuthProvider : will implement
+' AuthJSv5Adapter ..|> AuthProvider : implements
+' FormState ..> AuthJSv5Adapter : will call
+
+note right of LoginPage
+  Current Implementation:
+  - Functional component (no class)
+  - No props accepted
+  - No state management
+  - No event handlers
+  - Inline form (not separate component)
+  - Ready for Auth.js v5 integration
+end note
+
+note right of LoginForm
+  Form Structure:
+  - No onSubmit handler
+  - No action attribute
+  - Relies on browser default validation
+  - Will need server action integration
+end note
+
+note right of AuthProvider
+  Future Integration:
+  - Auth.js v5 authentication
+  - Server actions for form submission
+  - Session management
+  - Error handling
+  - Form validation
+end note
+
+@enduml

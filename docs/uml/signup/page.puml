@@ -1,0 +1,163 @@
+@startuml SignupPage Component Structure
+
+' SignupPage Component UML Diagram
+' This diagram shows the structure of the SignupPage component
+' as implemented in app/signup/page.tsx
+
+package "app/signup" {
+  class SignupPage {
+    + SignupPage(): JSX.Element
+    --
+    ' React Functional Component
+    ' Returns: JSX page element with signup form
+    ' Current: Inline form, no state, no handlers
+  }
+}
+
+package "JSX Elements" {
+  class PageContainer {
+    - className: string (Tailwind gradient classes)
+  }
+
+  class CardContainer {
+    - className: string (Tailwind card classes)
+  }
+
+  class Heading {
+    - text: "Ready to join the conversation?"
+    - className: string (Tailwind heading classes)
+  }
+
+  class Subheading {
+    - text: "Create an account to get started!"
+    - className: string (Tailwind text classes)
+  }
+
+  class SignupForm {
+    - className: "space-y-4"
+    + onSubmit: undefined (no handler)
+  }
+
+  class EmailInput {
+    - type: "email"
+    - name: "email"
+    - id: "email"
+    - required: true
+    - placeholder: "you@example.com"
+  }
+
+  class UsernameInput {
+    - type: "text"
+    - name: "username"
+    - id: "username"
+    - required: true
+    - placeholder: "RavynGG"
+  }
+
+  class PasswordInput {
+    - type: "password"
+    - name: "password"
+    - id: "password"
+    - required: true
+    - placeholder: "********"
+  }
+
+  class ConfirmPasswordInput {
+    - type: "password"
+    - name: "confirm-password"
+    - id: "confirm-password"
+    - required: true
+    - placeholder: "********"
+  }
+
+  class SubmitButton {
+    - type: "submit"
+    - text: "Submit"
+    - className: string (Tailwind classes)
+  }
+
+  class Label {
+    - htmlFor: string
+    - className: string (Tailwind classes)
+    - text: string
+  }
+}
+
+package "Future Integration" {
+  interface AuthProvider {
+    + signUp(credentials): Promise<User>
+    + handleError(error): void
+  }
+
+  class AuthJSv5Adapter {
+    + createUser(email, username, password): Promise<User>
+    + validateCredentials(): boolean
+    + checkUsernameAvailability(): boolean
+  }
+
+  class FormState {
+    - email: string
+    - username: string
+    - password: string
+    - confirmPassword: string
+    - errors: ValidationError[]
+    - isLoading: boolean
+    + updateField(): void
+    + validateForm(): boolean
+    + validatePasswordMatch(): boolean
+    + reset(): void
+  }
+}
+
+' Current Structure (as implemented)
+SignupPage --> PageContainer : returns
+PageContainer --> CardContainer : contains
+CardContainer --> Heading : contains
+CardContainer --> Subheading : contains
+CardContainer --> SignupForm : contains
+SignupForm *-- EmailInput : contains
+SignupForm *-- UsernameInput : contains
+SignupForm *-- PasswordInput : contains
+SignupForm *-- ConfirmPasswordInput : contains
+SignupForm *-- SubmitButton : contains
+EmailInput ..> Label : associated with
+UsernameInput ..> Label : associated with
+PasswordInput ..> Label : associated with
+ConfirmPasswordInput ..> Label : associated with
+
+' Future Relationships (commented for future implementation)
+' SignupPage ..> FormState : will use
+' SignupPage ..> AuthProvider : will implement
+' AuthJSv5Adapter ..|> AuthProvider : implements
+' FormState ..> AuthJSv5Adapter : will call
+
+note right of SignupPage
+  Current Implementation:
+  - Functional component (no class)
+  - No props accepted
+  - No state management
+  - No event handlers
+  - Inline form (not separate component)
+  - Ready for Auth.js v5 integration
+end note
+
+note right of SignupForm
+  Form Structure:
+  - No onSubmit handler
+  - No action attribute
+  - Relies on browser default validation
+  - Will need server action integration
+  - Includes password confirmation field
+end note
+
+note right of AuthProvider
+  Future Integration:
+  - Auth.js v5 authentication
+  - Server actions for form submission
+  - User creation and email verification
+  - Username availability checking
+  - Password strength validation
+  - Error handling
+end note
+
+@enduml

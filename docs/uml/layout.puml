@@ -1,0 +1,115 @@
+@startuml RootLayout Component Structure
+
+' RootLayout Component UML Diagram
+' This diagram shows the structure of the RootLayout component
+' as implemented in app/layout.tsx
+
+package "app" {
+  class RootLayout {
+    - children: React.ReactNode
+    + RootLayout(children): JSX.Element
+    --
+    ' React Functional Component
+    ' Returns: HTML structure with metadata and footer
+    ' Wraps all pages in the application
+  }
+
+  class Metadata {
+    - title: "Socially"
+    - description: string
+    - icons: { icon: "/favicon.ico" }
+    - openGraph: OpenGraphMetadata
+  }
+}
+
+package "JSX Elements" {
+  class HTMLRoot {
+    - lang: "en"
+    - className: "dark"
+  }
+
+  class Body {
+    - className: string (font variables + Tailwind classes)
+  }
+
+  class Main {
+    - className: "flex-1"
+    - children: React.ReactNode
+  }
+
+  class Footer {
+    - className: string (Tailwind footer classes)
+  }
+
+  class FooterContent {
+    - maxWidth: "max-w-6xl"
+    - className: string
+  }
+
+  class FooterColumn {
+    - title: string
+    - content: JSX.Element
+  }
+
+  class FooterLinks {
+    - links: Link[]
+    + render(): JSX.Element
+  }
+
+  class Copyright {
+    - year: number
+    - text: string
+  }
+
+  class Badge {
+    - text: "Made in Michigan💙"
+    - className: string (gradient badge classes)
+  }
+}
+
+package "Font Configuration" {
+  class geistSans {
+    - variable: "--font-geist-sans"
+    - subsets: ["latin"]
+    + import: "Geist from next/font/google"
+  }
+
+  class geistMono {
+    - variable: "--font-geist-mono"
+    - subsets: ["latin"]
+    + import: "Geist_Mono from next/font/google"
+  }
+}
+
+' Current Structure (as implemented)
+RootLayout --> Metadata : exports
+RootLayout --> HTMLRoot : returns
+HTMLRoot --> Body : contains
+Body --> Main : contains
+Body --> Footer : contains
+Main --> children : renders
+Footer --> FooterContent : contains
+FooterContent --> FooterColumn : contains (2 columns)
+FooterContent --> Copyright : contains
+Footer --> Badge : contains (absolute positioned)
+RootLayout ..> geistSans : uses
+RootLayout ..> geistMono : uses
+
+note right of RootLayout
+  Current Implementation:
+  - Wraps all pages in the application
+  - Provides global layout structure
+  - Includes metadata configuration
+  - Footer with links and branding
+  - Dark theme by default
+end note
+
+note right of FooterLinks
+  Footer Links:
+  - Privacy Policy (/privacy)
+  - Terms of Service (/terms)
+  - Contact Us (/contact)
+  - Routes not yet implemented
+end note
+
+@enduml

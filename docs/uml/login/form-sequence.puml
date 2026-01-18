@@ -1,0 +1,78 @@
+@startuml LoginForm Sequence Diagram
+
+' LoginForm Sequence Diagram
+' Shows the current and future login flow logic
+' Located in app/login/page.tsx
+
+actor User
+participant "LoginPage" as Page
+participant "Browser" as Browser
+participant "Form Element" as FormEl
+participant "Email Input" as Email
+participant "Password Input" as Pass
+participant "Submit Button" as Submit
+
+== Current Implementation (No Handlers) ==
+
+User -> Page: Navigate to /login
+activate Page
+Page -> Browser: Render login page with form
+Page --> User: Display login form
+deactivate Page
+
+User -> Email: Enter email address
+Email -> Browser: Update input value
+
+User -> Pass: Enter password
+Pass -> Browser: Update input value
+
+User -> Submit: Click "Login" button
+activate Submit
+Submit -> FormEl: Trigger form submit
+activate FormEl
+note right of FormEl
+  Current: No onSubmit handler
+  Form submits with default behavior
+  No authentication logic
+end note
+FormEl --> Browser: Default form submission
+deactivate FormEl
+deactivate Submit
+Browser --> User: Page reloads (no action)
+
+== Future Implementation (With Auth.js v5) ==
+
+User -> Submit: Click "Login" button
+activate Submit
+Submit -> FormEl: Trigger form submit
+activate FormEl
+FormEl -> Page: Call handleSubmit(event)
+activate Page
+Page -> Page: Validate form data
+alt Validation fails
+  Page --> User: Display validation errors
+else Validation succeeds
+  Page -> Page: Set loading state
+  Page -> AuthJS: Call signIn(credentials)
+  activate AuthJS
+  AuthJS -> Database: Verify credentials
+  activate Database
+  alt Invalid credentials
+    Database --> AuthJS: Return error
+    AuthJS --> Page: Return error
+    Page --> User: Display error message
+  else Valid credentials
+    Database --> AuthJS: Return user data
+    AuthJS -> AuthJS: Create session
+    AuthJS --> Page: Return session
+    Page -> Page: Redirect to dashboard
+    Page --> User: Show success / redirect
+  end
+  deactivate Database
+  deactivate AuthJS
+end
+deactivate Page
+deactivate FormEl
+deactivate Submit
+
+@enduml

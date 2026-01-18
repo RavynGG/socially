@@ -1,0 +1,104 @@
+@startuml SignupForm Sequence Diagram
+
+' SignupForm Sequence Diagram
+' Shows the current and future signup flow logic
+' Located in app/signup/page.tsx
+
+actor User
+participant "SignupPage" as Page
+participant "Browser" as Browser
+participant "Form Element" as FormEl
+participant "Email Input" as Email
+participant "Username Input" as Username
+participant "Password Input" as Pass
+participant "Confirm Password Input" as ConfirmPass
+participant "Submit Button" as Submit
+
+== Current Implementation (No Handlers) ==
+
+User -> Page: Navigate to /signup
+activate Page
+Page -> Browser: Render signup page with form
+Page --> User: Display signup form
+deactivate Page
+
+User -> Email: Enter email address
+Email -> Browser: Update input value
+
+User -> Username: Enter username
+Username -> Browser: Update input value
+
+User -> Pass: Enter password
+Pass -> Browser: Update input value
+
+User -> ConfirmPass: Enter confirm password
+ConfirmPass -> Browser: Update input value
+
+User -> Submit: Click "Submit" button
+activate Submit
+Submit -> FormEl: Trigger form submit
+activate FormEl
+note right of FormEl
+  Current: No onSubmit handler
+  Form submits with default behavior
+  No authentication logic
+end note
+FormEl --> Browser: Default form submission
+deactivate FormEl
+deactivate Submit
+Browser --> User: Page reloads (no action)
+
+== Future Implementation (With Auth.js v5) ==
+
+User -> Submit: Click "Submit" button
+activate Submit
+Submit -> FormEl: Trigger form submit
+activate FormEl
+FormEl -> Page: Call handleSubmit(event)
+activate Page
+Page -> Page: Validate form data
+alt Validation fails
+  Page --> User: Display validation errors
+else Validation succeeds
+  Page -> Page: Check password match
+  alt Passwords don't match
+    Page --> User: Display password mismatch error
+  else Passwords match
+    Page -> Page: Set loading state
+    Page -> AuthJS: Check username availability
+    activate AuthJS
+    AuthJS -> Database: Query username
+    activate Database
+    alt Username taken
+      Database --> AuthJS: Return conflict
+      AuthJS --> Page: Return error
+      Page --> User: Display username taken error
+    else Username available
+      Database --> AuthJS: Username available
+      AuthJS --> Page: Username available
+      Page -> AuthJS: Call signUp(credentials)
+      AuthJS -> Database: Create user
+      alt User creation fails
+        Database --> AuthJS: Return error
+        AuthJS --> Page: Return error
+        Page --> User: Display error message
+      else User creation succeeds
+        Database --> AuthJS: Return user data
+        AuthJS -> EmailService: Send verification email
+        activate EmailService
+        EmailService --> AuthJS: Email sent
+        deactivate EmailService
+        AuthJS --> Page: Return success
+        Page -> Page: Redirect to verification page
+        Page --> User: Show success / redirect
+      end
+    end
+    deactivate Database
+    deactivate AuthJS
+  end
+end
+deactivate Page
+deactivate FormEl
+deactivate Submit
+
+@enduml

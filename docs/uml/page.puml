@@ -1,0 +1,76 @@
+@startuml HomePage Component Structure
+
+' HomePage Component UML Diagram
+' This diagram shows the structure of the HomePage component
+' as implemented in app/page.tsx
+
+package "app" {
+  class Home {
+    + Home(): JSX.Element
+    --
+    ' React Functional Component
+    ' Returns: JSX page element with welcome message
+    ' Current: Static content, no interactivity
+  }
+}
+
+package "JSX Elements" {
+  class PageContainer {
+    - className: string (Tailwind gradient classes)
+  }
+
+  class CardContainer {
+    - className: string (Tailwind card classes)
+  }
+
+  class Heading {
+    - text: "Welcome to Socially!"
+    - className: string (Tailwind heading classes)
+  }
+
+  class Description {
+    - text: "An open source social media platform..."
+    - className: string (Tailwind text classes)
+  }
+}
+
+package "Future Integration" {
+  class NavigationLinks {
+    + links: Link[]
+    + render(): JSX.Element
+  }
+
+  class UserStatus {
+    - isAuthenticated: boolean
+    - user: User | null
+    + render(): JSX.Element
+  }
+}
+
+' Current Structure (as implemented)
+Home --> PageContainer : returns
+PageContainer --> CardContainer : contains
+CardContainer --> Heading : contains
+CardContainer --> Description : contains
+
+' Future Relationships (commented for future implementation)
+' Home ..> NavigationLinks : will use
+' Home ..> UserStatus : will use
+
+note right of Home
+  Current Implementation:
+  - Functional component (no class)
+  - No props accepted
+  - Static welcome message
+  - No navigation or authentication checks
+  - Ready for feature integration
+end note
+
+note right of NavigationLinks
+  Future Integration:
+  - Navigation to login/signup
+  - Conditional rendering based on auth state
+  - Links to user dashboard if authenticated
+end note
+
+@enduml
