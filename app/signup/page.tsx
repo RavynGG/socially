@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function SignupPage() {
   // Imagine the login page as the welcome mat at the front door of your digital house!
@@ -83,8 +84,11 @@ export default function SignupPage() {
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition-colors">
             Submit
           </button>
+          <div className="mt-1 text-center font-bold text-sm">
+          <Link href="/login">Already have an account? Click here!</Link>
+          </div>
         </form>
       </div>
     </div>
-  );
+  );  
 }  
